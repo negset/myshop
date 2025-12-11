@@ -19,3 +19,9 @@ $ create table login_failure(ip char(64) not null, time timestamp not null);
 $ create event delete_old_login_failure on schedule every 1 minute do delete from login_attempt where time < (now() - interval 5 minute);
 $ set global event_scheduler = on;
 ```
+
+or
+
+```
+$ mysql -u root -p < schema.sql
+```
