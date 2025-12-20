@@ -10,9 +10,17 @@ function show_item(int $id, int $quantity): void {
 
   db_disconnect($mysqli);
 
+  $price = number_format($rows[0]["price"]);
   echo <<<END
-  <input type="hidden" name="ids[]" value="{$id}">
-  {$rows[0]["name"]} <input name="prices[{$id}]" value="{$rows[0]["price"]}" readonly> 円 x <input name="quantities[{$id}]" value="{$quantity}" readonly>
+  <p>
+    <input type="hidden" name="ids[]" value="{$id}">
+    <a href="./item.php?id={$id}">{$rows[0]["name"]}</a>
+  </p>
+  <p>
+    <input name="prices[{$id}]" value="{$price}" readonly> 円 × 
+    <input name="quantities[{$id}]" value="{$quantity}" readonly>
+  </p>
+  <button type="submit" name="delete" value="{$id}" formaction="{$_SERVER["PHP_SELF"]}">削除</button>
   END;
 }
 
@@ -35,6 +43,10 @@ if (isset($_POST["clear"])) {
   $_SESSION["cart"] = [];
 }
 
+if (isset($_SESSION["id"]) && isset($_POST["delete"])) {
+  unset($_SESSION["cart"][$_POST["delete"]]);
+}
+
 require_once "./nav.php";
 
 echo "<h2>カート内容</h2>";
@@ -55,6 +67,7 @@ if (empty($_SESSION["cart"])) {
 
     $total_price += $quantity * get_price($id);
   }
+  $total_price = number_format($total_price);
 
   $token = bin2hex(random_bytes(32));
   $_SESSION["token"] = $token;

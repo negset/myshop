@@ -9,7 +9,14 @@ function show_purchase_item(int $item_id, int $price, int $quantity): void {
 
   db_disconnect($mysqli);
 
-  echo "<li>{$rows[0]["name"]} {$price} 円 x {$quantity}</li>";
+  $price = number_format($price);
+  echo <<<END
+  <p>
+    <a href="./item.php?id={$item_id}">{$rows[0]["name"]}</a>
+    <br>
+    {$price} 円 × {$quantity}
+  </p>
+  END;
 }
 
 function show_purchase(int $account_id, int $purchase_id): void {
@@ -24,7 +31,7 @@ function show_purchase(int $account_id, int $purchase_id): void {
   }
 
   $date = $rows[0]["date"];
-  $total = $rows[0]["total"];
+  $total = number_format($rows[0]["total"]);
 
   $query = "select * from purchase_item where purchase_id = ?";
   $rows = db_execute($mysqli, $query, "i", [$purchase_id]);
@@ -37,7 +44,9 @@ function show_purchase(int $account_id, int $purchase_id): void {
   END;
 
   foreach ($rows as $row) {
+    echo "<li>";
     show_purchase_item($row["item_id"], $row["price"], $row["quantity"]);
+    echo "</li>";
   }
 
   echo <<<END

@@ -8,8 +8,7 @@ function get_purchase_count(): int {
   $mysqli = db_connect();
 
   $query = "select count(*) as cnt from purchase where account_id = ?";
-  $account_id = $_SESSION["id"];
-  $rows = db_execute($mysqli, $query, "i", [$account_id]);
+  $rows = db_execute($mysqli, $query, "i", [$_SESSION["id"]]);
 
   db_disconnect($mysqli);
 
@@ -28,13 +27,18 @@ function show_purchases(int $current_page): void {
   $offset = PAGE_SIZE * ($current_page - 1);
   $rows = db_execute($mysqli, $query, "iii", [$account_id, $limit, $offset]);
 
+  db_disconnect($mysqli);
+
   echo "<ul>";
   foreach ($rows as $row) {
-    echo "<li><a href='./purchase.php?id={$row['id']}'>{$row['date']} {$row['total']} 円</a></li>";
+    $total = number_format($row["total"]);
+    echo <<<END
+    <li><p>
+      <a href="./purchase.php?id={$row["id"]}">{$row["date"]}<br>{$total} 円</a>
+    </p></li>
+    END;
   }
   echo "</ul><br>";
-
-  db_disconnect($mysqli);
 }
 
 @session_start();

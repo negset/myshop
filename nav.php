@@ -12,6 +12,7 @@ if (isset($_SESSION["id"])) {
   こんにちは、{$_SESSION["user"]} さん。
   <br>
   <a href="./cart.php">カート ({$cart_size})</a>
+  <a href="./wishlist.php">ウィッシュリスト</a>
   <a href="./history.php">購入履歴</a>
   <a href="./login.php?act=logout&next={$next}">ログアウト</a>
   END;
